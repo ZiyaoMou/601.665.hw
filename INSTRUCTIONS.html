@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>INSTRUCTIONS</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">INSTRUCTIONS</h1>
+</header>
+<h1 id="nlp-homework-2-probability-and-vector-exercises">NLP Homework 2:
+Probability and Vector Exercises</h1>
+<h2 id="downloading-the-assignment-materials">Downloading the Assignment
+Materials</h2>
+<p>We assume that you’ve made a local copy of <a
+href="http://cs.jhu.edu/~jason/465/hw-prob/"
+class="uri">http://cs.jhu.edu/~jason/465/hw-prob/</a> (for example, by
+downloading and unpacking the zipfile there) and that you’re currently
+in the <code>code/</code> subdirectory.</p>
+<h2 id="environments-and-miniconda">Environments and Miniconda</h2>
+<p>If you’re working on the <code>ugrad</code> network, activate a
+“conda environment” that has the Python packages you’ll need:</p>
+<pre><code>conda activate nlp-class</code></pre>
+<p>If this worked, then your prompt should be prefixed by the
+environment name, like this:</p>
+<pre><code>(nlp-class) arya@ugradx:~/hw-prob/code$</code></pre>
+<p>This means that various third-party packages are now available for
+you to “import” in your Python scripts. You are also, for sure, using
+the same versions of everything as the autograder is. To return to the
+default environment, do</p>
+<pre><code>conda deactivate nlp-class</code></pre>
+<p>Alternatively, you can set this up on your own machine by installing
+Miniconda, a tool for installing and managing Python environments.
+Miniconda and its big sibling Anaconda (which has swallowed more Python
+packages) are all the rage in NLP and deep learning. Install Miniconda
+following your platform-specific instructions from <a
+href="https://conda.io/projects/conda/en/latest/user-guide/install/">here</a>.
+Then create the environment with</p>
+<pre><code>conda env create -f nlp-class.yml</code></pre>
+<p>after which you can activate the environment as explained above.</p>
+<h2 id="quick-pytorch-tutorial-author-arya-mccarthy">Quick PyTorch
+Tutorial (author: Arya McCarthy)</h2>
+<p>HW2 and some subsequent assignments rely on a vector math library
+called PyTorch, which has become popular in the deep learning community.
+Because you may not have seen or used it before, this note serves as a
+whirlwind intro. This intro assumes familiarity with Python. It won’t
+teach you about neural networks, which this library enables you to build
+more easily.</p>
+<p>You can start by reading <a
+href="https://pytorch.org/tutorials/beginner/nlp/pytorch_tutorial.html">PyTorch’s
+own tutorial</a>. For HW2, you can skip the section “Computation Graphs
+and Automatic Differentiation”, although you’ll need it for HW3.</p>
+<p>PyTorch <code>Tensor</code> objects are more like the fixed-length
+arrays from C++ or Java than the dynamically sized
+<code>ArrayList</code> and <code>list</code> classes in Java and Python.
+It’s slow to append elements to a tensor (e.g. using
+<code>torch.concat</code>), because this is a non-destructive operation
+that allocates a new, larger tensor and copies all the old elements
+over. So, if you’re reading in an embedding matrix from a file, either
+read it into a dynamic structure and then convert to a tensor, or else
+pre-allocate a tensor of the final size and fill it row-by-row.</p>
+<p>Another thing to keep in mind (once you’ve looked at the tutorial) is
+the relationship between vectorized operations (which are fast for
+several reasons) and their looping counterparts (which are slooooow).
+PyTorch knows how to apply functions to structures with different
+shapes.</p>
+<pre><code>import torch
+
+a = torch.tensor([0.1, 0.2, 0.3, 0.4])
+b = torch.tensor([11.2, 33.4, 55.6, 77.8])
+
+# Addition: The looping version
+c = torch.empty_like(a)  # same size as a
+for j in range(len(c)):
+    c[j] = a[j] + b[j]
+
+# Addition: The vectorized version
+d = a + b
+
+# Sanity check
+assert (c == d).all()  # All entries match.</code></pre>
+<p>Another example, using a custom function:</p>
+<pre><code>e = torch.tensor([[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]])
+def complicated_function(a):
+    &quot;&quot;&quot;f(a) = 1 / (1 + e^(-a))&quot;&quot;&quot;
+    return 1 / (1 + a.neg().exp())
+
+# Complicated function: The looping version
+f = torch.empty_like(e)
+for j in range(len(e)):
+    for k in range(len(e[0])):  # Length of the next dimension
+        f[j, k] = complicated_function(e[j, k])
+
+# Complicated function: The vectorized version
+g = complicated_function(e)
+
+# Sanity check
+assert (f == g).all()</code></pre>
+<p>(You should probably use more descriptive variable names in real
+code.)</p>
+<p>Useful debugging tools:</p>
+<pre><code>my_tensor.shape   # Is it the size I thought?
+my_tensor.dtype   # Did I accidentally store ints?
+type(my_variable) # Generic; works on all types.
+                  # Provides less info on Tensor objects, though ...
+breakpoint()      # Sets a breakpoint
+log.debug(f&quot;{my_var=}&quot;)
+log.debug(f&quot;{some_expression(involving_some+values)=}&quot;) 
+    # Easiest way to construct a message; it’ll even
+    # include the variable or expression
+    </code></pre>
+<hr />
+<h2 id="question-8.">QUESTION 8.</h2>
+<p>You’ll complete the <code>findsim.py</code> starter code.</p>
+<p>The <code>findsim.py</code> starter code imports PyTorch, as well as
+our <code>Integerizer</code> class (which is implemented and documented
+in <code>integerize.py</code>).</p>
+</body>
+</html>
