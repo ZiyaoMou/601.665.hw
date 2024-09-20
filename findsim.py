@@ -166,13 +166,13 @@ class Lexicon:
         #     torch.norm(self.embeddings, dim=1) * torch.norm(word_vector)
         # )
 
-        normalized_word_vector = word_vector / torch.norm(word_vector)  # 归一化查询词向量
-        normalized_embeddings = self.embeddings / torch.norm(self.embeddings, dim=1, keepdim=True)  # 归一化所有词向量
-        similarities = torch.matmul(normalized_embeddings, normalized_word_vector)  # 计算余弦相似度
+        normalized_word_vector = word_vector / torch.norm(word_vector) 
+        normalized_embeddings = self.embeddings / torch.norm(self.embeddings, dim=1, keepdim=True)
+        similarities = torch.matmul(normalized_embeddings, normalized_word_vector) 
 
-        top_similarities, top_indices = torch.topk(similarities, k=11, largest=True)
+        top_similarities, top_indices = torch.topk(similarities, k=10, largest=True)
 
-        similar_words = [self.words._objects[idx] for idx in top_indices[1:]]
+        similar_words = [self.words._objects[idx] for idx in top_indices if self.words.index_to_word(idx) != wb]
 
         return similar_words
 
