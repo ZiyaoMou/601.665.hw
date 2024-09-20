@@ -166,9 +166,9 @@ class Lexicon:
             torch.norm(self.embeddings, dim=1) * torch.norm(word_vector)
         )
 
-        top_similarities, top_indices = torch.topk(similarities, k=10, largest=True)
+        top_similarities, top_indices = torch.topk(similarities, k=11, largest=True)
 
-        similar_words = [self.words._objects[idx] for idx in top_indices]
+        similar_words = [self.words._objects[idx] for idx in top_indices[1:]]
 
         return similar_words
 
