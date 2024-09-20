@@ -172,7 +172,7 @@ class Lexicon:
 
         top_similarities, top_indices = torch.topk(similarities, k=20, largest=True)
 
-        top_indices = [ idx for idx in top_indices if self.words._objects[idx] != wb][0: 10]
+        top_indices = [ idx for idx in top_indices if self.words._objects[idx] != wb and self.words._objects[idx] != plus ][0: 10]
 
         similar_words = [self.words._objects[idx] for idx in top_indices]
 
