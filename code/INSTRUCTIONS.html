@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>INSTRUCTIONS</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">INSTRUCTIONS</h1>
+</header>
+<h1 id="nlp-homework-3-smoothed-language-modeling">NLP Homework 3:
+Smoothed Language Modeling</h1>
+<h2 id="downloading-the-assignment-materials">Downloading the Assignment
+Materials</h2>
+<p>We assume that you’ve made a local copy of <a
+href="http://www.cs.jhu.edu/~jason/465/hw-lm/"
+class="uri">http://www.cs.jhu.edu/~jason/465/hw-lm/</a> (for example, by
+downloading and unpacking the zipfile there) and that you’re currently
+in the <code>code/</code> subdirectory.</p>
+<h2 id="environments-and-miniconda">Environments and Miniconda</h2>
+<p>You can activate the same environment you created for Homework 2.</p>
+<pre><code>conda activate nlp-class</code></pre>
+<p>You may want to look again at the PyTorch tutorial materials in the
+<a
+href="http://cs.jhu.edu/~jason/465/hw-prob/INSTRUCTIONS.html#quick-pytorch-tutorial">Homework
+2 INSTRUCTIONS</a>, this time paying more attention to the documentation
+on automatic differentiation.</p>
+<h2 id="wildcards-in-the-shell">Wildcards in the Shell</h2>
+<p>The command lines below use wildcard notations such as
+<code>../data/gen_spam/dev/gen/*</code> and
+<code>../data/gen_spam/train/{gen,spam}</code>. These are supposed to
+expand automatically into lists of matching files.</p>
+<p>This will work fine if you are running a shell like
+<code>bash</code>, which is standard on Linux and MacOS. If you’re using
+Windows, we recommend that you <a
+href="https://itsfoss.com/install-bash-on-windows/">install bash</a>
+there, but you could alternatively <a
+href="https://stackoverflow.com/questions/43897242/powershell-wildcards-in-passing-filenames-as-arguments">force
+Windows PowerShell to expand wildcards</a>.</p>
+<h2 id="question-1.">QUESTION 1.</h2>
+<p>We provide a script <code>./build_vocab.py</code> for you to build a
+vocabulary from some corpus. Type <code>./build_vocab.py --help</code>
+to see documentation. Once you’ve familiarized yourself with the
+arguments, try running it like this:</p>
+<pre><code>./build_vocab.py ../data/gen_spam/train/{gen,spam} --threshold 3 --output vocab-genspam.txt </code></pre>
+<p>This creates <code>vocab-genspam.txt</code>, which you can look at:
+it’s just a set of word types including <code>OOV</code> and
+<code>EOS</code>.</p>
+<p>Once you’ve built a vocab file, you can use it to build one or more
+smoothed language models. If you are <em>comparing</em> two models, both
+models should use the <em>same</em> vocab file, to make the
+probabilities comparable (as explained in the homework handout).</p>
+<p>We also provide a script <code>./train_lm.py</code> for you to build
+a smoothed language model from a vocab file and a corpus. (The code for
+actually training and using models is in the <code>probs.py</code>
+module, which you will extend later.)</p>
+<p>Type <code>./train_lm.py --help</code> to see documentation. Once
+you’ve familiarized yourself with the arguments, try running it like
+this:</p>
+<pre><code>./train_lm.py vocab-genspam.txt add_lambda --lambda 1.0 ../data/gen_spam/train/gen </code></pre>
+<p>Here <code>add_lambda</code> is the type of smoothing, and
+<code>--lambda</code> specifies the hyperparameter λ=1.0. While the
+documentation mentions additional hyperparameters like
+<code>--l2_regularization</code>, they are not used by the
+<code>add_lambda</code> smoothing technique, so specifying them will
+have no effect on it.</p>
+<p>Since the above command line doesn’t specify an <code>--output</code>
+file to save the model in, the script just makes up a long filename
+(ending in <code>.model</code>) that mentions the choice of
+hyperparameters. You may sometimes want to use shorter filenames, or
+specific filenames that are required by the submission instructions that
+we’ll post on Piazza.</p>
+<p>The file
+<code>corpus=gen~vocab=vocab-genspam.txt~smoother=add_lambda~lambda=1.0.model</code>
+now contains a <a
+href="https://docs.python.org/3/library/pickle.html">pickled</a> copy of
+a trained Python <code>LanguageModel</code> object. The object contains
+everything you need to <em>use</em> the language model, including the
+type of language model, the trained parameters, and a copy of the
+vocabulary. Other scripts can just load the model object from the file
+and query it to get information like <span
+class="math inline"><em>p</em>(<em>z</em>∣<em>x</em><em>y</em>)</span>
+by calling its methods. They don’t need to know how the model works
+internally or how it was trained.</p>
+<p>You can now use your trained models to assign probabilities to new
+corpora using <code>./fileprob.py</code>. Type
+<code>./fileprob.py --help</code> to see documentation. Once you’ve
+familiarized yourself with the arguments, try running the script like
+this:</p>
+<pre><code>./fileprob.py [mymodel] ../data/gen_spam/dev/gen/*</code></pre>
+<p>where <code>[mymodel]</code> refers to the long filename above. (You
+may not have to type it all: try typing the start and hitting Tab, or
+type <code>*.model</code> if it’s the only model matching that
+pattern.)</p>
+<p><em>Note:</em> It may be convenient to use symbolic links (shortcuts)
+to avoid typing long filenames or directory names. For example,</p>
+<pre><code>ln -sr corpus=gen~vocab=vocab-genspam.txt~smoother=add_lambda~lambda=1.0.model gen.model</code></pre>
+<p>will make <code>gen.model</code> be a shortcut for the long model
+filename, and</p>
+<pre><code>ln -sr ../data/speech/train sptrain </code></pre>
+<p>will make <code>sptrain</code> be a shortcut to that directory, so
+that <code>sptrain/switchboard</code> is now a shortcut to
+<code>../data/speech/train/switchboard</code>.</p>
+<hr />
+<h2 id="questions-2-3.">QUESTIONS 2-3.</h2>
+<p>Copy <code>fileprob.py</code> to <code>textcat.py</code>.</p>
+<p>Modify <code>textcat.py</code> so that it does text categorization.
+<code>textcat.py</code> should have almost the same command-line API as
+<code>./fileprob.py</code>, except it should take <em>two</em> models
+instad of just one.</p>
+<p>You could train your language models with lines like</p>
+<pre><code>./train_lm.py vocab-genspam.txt add_lambda --lambda 1.0 gen --output gen.model
+./train_lm.py vocab-genspam.txt add_lambda --lambda 1.0 spam --output spam.model</code></pre>
+<p>which saves the trained models in a file but prints no output. You
+should then be able to categorize the development corpus files in
+question 3 like this:</p>
+<pre><code>./textcat.py gen.model spam.model 0.7 ../data/gen_spam/dev/{gen,spam}/*</code></pre>
+<p>Note that <code>LanguageModel</code> objects have a
+<code>vocab</code> attribute. You should do a sanity check in
+<code>textcat.py</code> that both language models loaded for text
+categorization have the same vocabulary. If not, <code>raise</code> a
+exception (<code>ValueError</code> is appropriate for illegal or
+inconsistent arguments), or if you don’t like throwing uncaught
+exceptions back to the user, print an error message
+(<code>log.critical</code>) and halt (<code>sys.exit(1)</code>).</p>
+<p>(It’s generally wise to include sanity checks in your code that will
+immediately catch problems, so that you don’t have to track down
+mysterious behavior. The <code>assert</code> statement is used to check
+statements that should be correct if your code is <em>internally</em>
+correct. Once your code is correct, these assertions should
+<em>never</em> fail. Some people even turn assertion-checking off in the
+final version, for speed. But even correct code may encounter conditions
+beyond its control; for those cases, you should <code>raise</code> an
+exception to warn the caller that the code couldn’t do what it was asked
+to do, typically because the arguments were bad or the required
+resources were unavailable.)</p>
+<hr />
+<h2 id="question-5.">QUESTION 5.</h2>
+<p>You want to support the <code>add_lambda_backoff</code> argument to
+<code>train_lm.py</code>. This makes use of
+<code>BackoffAddLambdaLanguageModel</code> class in
+<code>probs.py</code>. You will have to implement the
+<code>prob()</code> method in that class.</p>
+<p>Make sure that for any bigram <span
+class="math inline"><em>x</em><em>y</em></span>, you have <span
+class="math inline">∑<sub><em>z</em></sub><em>p</em>(<em>z</em>∣<em>x</em><em>y</em>) = 1</span>,
+where <span class="math inline"><em>z</em></span> ranges over the whole
+vocabulary including OOV and EOS.</p>
+<p>As you are only adding a new model, the behavior of your old models
+such as <code>AddLambdaLanguageModel</code> should not change.</p>
+<hr />
+<h2 id="question-6.">QUESTION 6.</h2>
+<p>Now add the <code>sample()</code> method to <code>probs.py</code>.
+Did your good object-oriented programming principles suggest the best
+place to do this?</p>
+<p>To make <code>trigram_randsent.py</code>, start by copying
+<code>fileprob.py</code>. As the handout indicates, the graders should
+be able to call the script like this:</p>
+<pre><code>./trigram_randsent.py [mymodel] 10 --max_length 20</code></pre>
+<p>to get 10 samples of length at most 20.</p>
+<hr />
+<h2 id="question-7.">QUESTION 7.</h2>
+<p>You want to support the <code>log_linear</code> argument to
+<code>train_lm.py</code>. This makes use of
+<code>EmbeddingLogLinearLanguageModel</code> in <code>probs.py</code>.
+Complete that class.</p>
+<p>For part (b), you’ll need to complete the <code>train()</code> method
+in that class.</p>
+<p>For part (d), you want to support <code>log_linear_improved</code>.
+This makes use of <code>ImprovedLogLinearLanguageModel</code>, which you
+should complete as you see fit. It is a subclass of the LOGLIN model, so
+you can inherit or override methods as you like.</p>
+<p>As you are only adding new models, the behavior of your old models
+should not change.</p>
+<h3 id="using-vectormatrix-operations-crucial-for-speed">Using
+vector/matrix operations (crucial for speed!)</h3>
+<p>Training the log-linear model on <code>en.1K</code> can be done with
+simple “for” loops and 2D array representation of matrices. However,
+you’re encouraged to use PyTorch’s tensor operations, as discussed in
+the handout. This will reduce training time and might simplify your
+code.</p>
+<p><em>TA’s note:</em> “My original implementation took 22 hours per
+epoch. Careful vectorization of certain operations, leveraging PyTorch,
+brought that runtime down to 13 minutes per epoch.”</p>
+<p>Make sure to use the <code>torch.logsumexp</code> method for
+computing the log-denominator in the log-probability.</p>
+<h3 id="improve-the-sgd-training-loop-optional">Improve the SGD training
+loop (optional)</h3>
+<p>The reading handout has a section with this title.</p>
+<p>To recover Algorithm 1 (convergent SGD), you can use a modified
+optimizer that we provide for you in <code>SGD_convergent.py</code>:</p>
+<pre><code>from SGD_convergent import ConvergentSGD
+optimizer = ConvergentSGD(self.parameters(), gamma0=gamma0, lambda_=2*C/N)</code></pre>
+<p>To break the epoch model as suggested in the “Shuffling” subsection,
+check out the method <code>draw_trigrams_forever</code> in
+<code>probs.py</code>.</p>
+<p>For mini-batching, you could modify either <code>read_trigrams</code>
+or <code>draw_trigrams_forever</code>.</p>
+<h3 id="a-note-on-type-annotations">A note on type annotations</h3>
+<p>In the starter code for this class, we have generally tried to follow
+good Python practice by <a
+href="https://www.infoworld.com/article/3630372/get-started-with-python-type-hints.html">annotating
+the type</a> of function arguments, function return values, and some
+variables. This serves as documentation. It also allows a type checker
+like <a
+href="https://mypy.readthedocs.io/en/stable/getting_started.html"><code>mypy</code></a>
+or <code>pylance</code> to report likely bugs – places in your code
+where it can’t prove that your function is being applied on arguments of
+the declared type, or that your variable is being assigned a value of
+the declared type. You can run the type checker manually or configure
+your IDE to run it continually.</p>
+<p>Ordinarily Python doesn’t check types at runtime, as this would slow
+down your code. However, the <code>typeguard</code> module does allow
+you to request runtime checking for particular functions.</p>
+<p>Runtime checking is especially helpful for tensors. All PyTorch
+tensors have the same type – namely <code>torch.Tensor</code> – but that
+doesn’t mean that they’re interchangeable. For example, trying to
+multiply a 4 x 7 matrix by a 10 x 7 matrix will raise a runtime
+exception, which will alert you that one of your matrices was wrong.
+Perhaps you meant to transpose the 10 x 7 matrix into a 7 x 10 matrix.
+Unfortunately, this exception only happens once that line of code is
+actually executed, and only because 10 happened to be different from 7;
+if the second matrix were 7 x 7, then the dimensions would
+coincidentally match and there would be no exception, just a wrong
+answer.</p>
+<p>So it helps to use stronger typing than in standard Python. The <a
+href="https://github.com/google/jaxtyping"><code>jaxtyping</code></a>
+module enables you to add finer-grained type annotations for a tensor’s
+shape (including <em>named</em> dimensions to distinguish the two 7’s
+above), dtype, etc. (This package is already in the
+<code>nlp-class.yml</code> environment.)</p>
+<p>With <code>typeguard</code>, your tensors can be checked at runtime
+to ensure that their actual types match the declared types. Without
+<code>typeguard</code>, <code>jaxtyping</code> is just for documentation
+purposes.</p>
+<pre><code># EXAMPLE
+
+import torch
+from jaxtyping import Float32
+from typeguard import typechecked
+
+@typechecked
+def func(x: Float32[torch.Tensor, &quot;batch&quot;, &quot;num_features&quot;],
+         y: Float32[torch.Tensor, &quot;num_features&quot;, &quot;batch&quot;]) -&gt; Float32[torch.Tensor, &quot;batch&quot;, &quot;batch&quot;]:
+    return torch.matmul(x,y)
+
+func(torch.rand((10,8)), torch.rand((8,10)))  # passes test
+func(torch.rand((10,8)), torch.rand((10,8)))  # complains that dimension named &quot;batch&quot; has inconsistent sizes</code></pre>
+<hr />
+<h2 id="question-9-extra-credit">QUESTION 9 (EXTRA CREDIT)</h2>
+<p>You can use the same language models as before, without changing
+<code>probs.py</code> or <code>train_lm.py</code>.</p>
+<p>In this question, however, you’re back to using only one language
+model as in <code>fileprob</code> (not two as in <code>textcat</code>).
+So, initialize <code>speechrec.py</code> to a copy of
+<code>fileprob.py</code>, and then edit it.</p>
+<p>Modify <code>speechrec.py</code> so that, instead of evaluating the
+prior probability of the entire test file, it separately evaluates the
+prior probability of each candidate transcription in the file. It can
+then select the transcription with the highest <em>posterior</em>
+probability and report its error rate, as required.</p>
+<p>The <code>read_trigrams</code> function in <code>probs.py</code> is
+no longer useful, since a speech dev or test file has a special format.
+You don’t want to iterate over all the trigrams in such a file. You may
+want to make an “outer loop” utility function that iterates over the
+candidate transcriptions in a given speech dev or test file, along with
+an “inner loop” utility function that iterates over the trigrams in a
+given candidate transcription.</p>
+<p>(The outer loop is specialized to the speechrec format, so it
+probably belongs in <code>speechrec.py</code>. The inner loop is similar
+to <code>read_trigrams</code> and might be more generally useful, so it
+probably belongs in <code>probs.py</code>.)</p>
+<hr />
+<h2 id="using-kaggle">Using Kaggle</h2>
+<p>This section is optional but is a good way to speed up your
+experiments, as discussed in the reading handout.</p>
+<p>(If you have your own GPU, you don’t need Kaggle; just include the
+command-line option <code>--device cuda</code> when running the starter
+code. Or if you have a Mac, you may be able to use
+<code>--device mps</code>.)</p>
+<h3 id="create-a-kaggle-account">Create a Kaggle account</h3>
+<p>To get a Kaggle account (if you don’t already have one), follow the
+instructions at <a href="https://www.kaggle.com/account/login"
+class="uri">https://www.kaggle.com/account/login</a>. Kaggle allows one
+account per email address.</p>
+<h3 id="create-a-kaggle-notebook-for-this-homework">Create a Kaggle
+Notebook for this homework</h3>
+<p>Visit <a href="https://www.kaggle.com/code"
+class="uri">https://www.kaggle.com/code</a> and click on the “New
+Notebook” button.</p>
+<p>Check the sharing settings of your notebook by opening the “File”
+menu and choosing “Share”. You can add your homework partner there as a
+collaborator. Academic honesty is required in all work that you and
+others submit to be graded, so please do not make your homework
+public.</p>
+<p>You can click on the notebook’s title to rename it. Now click on “Add
+Data” and add the dataset <a
+href="https://www.kaggle.com/datasets/jhunlpclass/hw-lm-data"
+class="uri">https://www.kaggle.com/datasets/jhunlpclass/hw-lm-data</a>,
+which has the data for this homework.</p>
+<h3 id="get-used-to-notebooks">Get used to Notebooks</h3>
+<p>How do you work the interface? If you hover over a cell, some useful
+buttons will appear nearby. Others will appear if you click on the cell
+to select it, or right-click on it (Command-click on a Mac) to bring up
+a context menu. You can also drag a cell. There are more buttons and
+menus to explore at the top of the notebook. Finally, there are lots of
+<a
+href="https://towardsdatascience.com/jypyter-notebook-shortcuts-bf0101a98330">keyboard
+shortcuts</a> – starting with very useful shortcuts like
+<code>Shift+Enter</code> for running the code you’ve just edited in the
+current cell.</p>
+<p>Try adding and running some Code cells, like</p>
+<pre><code>import math
+x=2
+math.log(x)</code></pre>
+<p>Try editing cells and re-running them.</p>
+<p>It’s also wise to create Markdown cells where you can keep notes on
+your computations. That’s why it’s called a Notebook. Try it out!</p>
+<p>Also try other operations on cells: cut/paste, collapse/expand,
+delete, etc.</p>
+<p>Try some shell commands. Their effects on the filesystem will persist
+as long as the kernel does. However, each <code>!</code> line is run in
+its own temporary bash shell, so the working directory and environment
+variables will be forgotten at the end of the line.</p>
+<pre><code>!cd /; ls                         # forgotten after this line
+!pwd                              # show name of current dir
+!ls -lF /kaggle/input/hw-lm-data  # look at the dataset you added</code></pre>
+<p>If you want to change the working directory persistently, use Python
+commands, since the Python session lasts for as long as the kernel
+does:</p>
+<pre><code>import os
+os.chdir(&#39;/kaggle/input/hw-lm-data/lexicons&#39;)
+!ls</code></pre>
+<h3 id="upload-your-python-code-to-kaggle">Upload your Python code to
+Kaggle</h3>
+<h4 id="upload-your-python-code-via-github">Upload your Python code via
+github</h4>
+<p>This is the first method sketched in the reading handout, and is
+preferred if you’re comfortable with git.</p>
+<p>Make a private github repository <code>hw-lm-code</code> for your
+homework code. You’d like to clone it from your Notebook like this:</p>
+<pre><code>!git clone https://github.com/&lt;username&gt;/hw-lm-code.git</code></pre>
+<p>Unfortunately, your repo is private and there’s no way to enter your
+password from the Notebook (well, <a
+href="https://gist.github.com/p-geon/75523f5de4a571cecf35b124aa319474">maybe
+there is</a>).</p>
+<p>You might think you could include your password somewhere on the
+above command line, but github now disallows this since they don’t want
+you to expose your password. Instead, github requires you to create a
+<em>personal access token</em>. Click on “Generate new token” <a
+href="https://github.com/settings/tokens?type=beta">here</a> to get a
+fine-grained personal access token. Configure your token as follows so
+that it gives access to what is necessary, and no more:</p>
+<ul>
+<li>Repository access = “Only select repositories”. Select your
+<code>hw-lm-code</code> repository.</li>
+<li>Repository Positions: Allow “Contents” access of “Read and
+write”.</li>
+<li>Now click the green “Generate token” button at the bottom of the
+page.</li>
+</ul>
+<p>You should now be able to put the following in a Notebook cell and
+run it:</p>
+<pre><code>!git clone https://oauth2:&lt;token&gt;@github.com/&lt;github username&gt;/hw-lm-code.git</code></pre>
+<p>where <code>&lt;token&gt;</code> is your token (about 100 chars) and
+<code>&lt;github username&gt;</code> is your github account username. If
+the Notebook reports that it can’t find <code>github.com</code>, then
+try again after turning “Internet on” in the “Notebook options” section
+of the “Notebook” pane. (The “Notebook” pane appears to the right of the
+Notebook; you might have to close the “Add Data” pane first in order to
+see it.)</p>
+<p>Congratulations! You now have a directory
+<code>/kaggle/working/hw-lm-code</code>. You can now run your code from
+your Notebook. For example, here’s a shell command:</p>
+<pre><code>!hw-lm-code/fileprob.py ../input/hw-lm-data/data/gen_spam/train/{gen,spam} --threshold 3 --output vocab-genspam.txt</code></pre>
+<p>If you want to use your modules interactively, try</p>
+<pre><code>pip install jaxtyping                           # needed dependency (we&#39;re not using nlp-class environment)
+sys.path.append(&#39;/kaggle/working/hw-lm-code&#39;)   # tells Python where to look for your modules (symlink)
+
+import probs      # import your own module
+tokens = probs.read_tokens(&quot;/kaggle/input/hw-lm-data/data/gen_spam/train/spam&quot;)
+list(tokens)[:20]</code></pre>
+<p>Whenever you push committed changes from your local machine to
+github, you can pull them down again into the Notebook environment by
+running this:</p>
+<pre><code>!cd hw-lm-code; git pull</code></pre>
+<h4 id="upload-your-python-code-as-a-dataset">Upload your Python code as
+a Dataset</h4>
+<p>This is the second method sketched in the reading handout. You’ll
+upload your code files to Kaggle as a new <em>private</em> Dataset; call
+it <code>hw-lm-code</code>.</p>
+<p>One option is to do this manually:</p>
+<ol>
+<li><p>Go to the web interface at , click on the “New Dataset” button,
+and upload your code files (individually or as a <code>.zip</code>
+file).</p></li>
+<li><p>If you later change your code, go to your Dataset
+<code>https://www.kaggle.com/datasets/&lt;kaggle username&gt;/hw-lm-code</code>
+and click “New Version” to replace files.</p></li>
+</ol>
+<p><a id="api"></a>Another option is to upload from your local machine’s
+command line. This makes it easier to update your code, but it will
+require a little setup.</p>
+<ol>
+<li><p>Go to the “Account” tab of your Kaggle profile
+(<code>https://www.kaggle.com/&lt;kaggle username&gt;/account</code>)
+and select “Create API Token”. A file <code>kaggle.json</code> will be
+downloaded.</p>
+<p>Move this file to <code>$HOME/.kaggle/kaggle.json</code> if you’re on
+MacOS/Linux, or to
+<code>C:\Users\&lt;windows username&gt;\.kaggle\kaggle.json</code> if
+you’re on Windows.</p>
+<p>You should make the file private, e.g.,
+<code>chmod 600 ~/.kaggle/kaggle.json</code>.</p></li>
+<li><p>Generate a metadata file in your code directory:</p>
+<pre><code>kaggle datasets init -p &lt;code directory&gt; </code></pre>
+<p>In the generated file, <code>datapackage.json</code>, edit the
+<code>title</code> to your liking and set <code>id</code> to
+<code>&lt;kaggle username&gt;/hw-lm-code</code>.</p></li>
+<li><p>You don’t have to do <code>pip install kaggle</code> because you
+already activated the <code>nlp-class</code> conda environment, which
+includes that package.</p></li>
+<li><p>Now you can create the Dataset with</p>
+<pre><code>kaggle datasets create -r zip -p &lt;code directory&gt;</code></pre></li>
+<li><p>If you later change your code, update your Dataset to a new
+version with</p>
+<pre><code>kaggle datasets version -r zip -p &lt;code directory&gt; -m&#39;your comment here&#39;</code></pre></li>
+</ol>
+<p>Once you’ve created the <code>hw-lm-code</code> Dataset (via either
+option), use your Notebook’s “Add Data” button again to add it to your
+Notebook as a second Dataset. Congratulations! Your Notebook can now see
+your code under <code>/kaggle/input/hw-lm-code</code>.</p>
+<p>Let’s create a symlink from <code>/kaggle/working/hw-lm-code</code>,
+so we can find the code at the same location as with the
+<code>git clone</code> method:</p>
+<pre><code>!ln -s /kaggle/input/hw-lm-code .</code></pre>
+<p>Unfortunately, everything under <code>/kaggle/input/</code> is
+read-only, since Kaggle thinks it’s data. So you can’t make the
+<code>.py</code> files executable (or modify them in any other way). But
+you can still execute the Python interpreter on them:</p>
+<pre><code>!python hw-lm-code/fileprob.py ../input/hw-lm-data/data/gen_spam/train/{gen,spam} --threshold 3 --output vocab-genspam.txt</code></pre>
+<p>And you can still use the modules interactively just as before:</p>
+<pre><code>pip install jaxtyping                           # needed dependency (we&#39;re not using nlp-class environment)
+sys.path.append(&#39;/kaggle/working/hw-lm-code&#39;)   # tells Python where to look for your modules (symlink)
+
+import probs      # import your own module
+tokens = probs.read_tokens(&quot;/kaggle/input/hw-lm-data/data/gen_spam/train/spam&quot;)
+list(tokens)[:20]</code></pre>
+<p>Whenever you update your Kaggle Dataset, you’ll have to tell the
+Notebook to reload <code>/kaggle/input/hw-lm-code</code>. Find your
+dataset in the “Notebook” pane (under “Datasets”) and select “Check for
+updates” from its “⋮” menu. (The “Notebook” pane appears to the right of
+the Notebook; you might have to close the “Add Data” pane first in order
+to see it.)</p>
+<h3 id="running-and-saving-the-notebook">Running and Saving the
+Notebook</h3>
+<p>A dashboard in the upper right of the notebook lets you see how long
+the associated kernel (background Python session) has been running and
+its CPU, GPU, RAM, and disk usage.</p>
+<p>Your kernel will be terminated if you close or reload the webpage, or
+if you’ve been inactive for over 40 minutes. Your Notebook will still be
+visible in the webpage. However, if you resume using it, a new kernel
+will be started. <a id="persistence"></a>You’ll have to re-run the
+Notebook’s cells (see the “Run All” command on the “Run” menu) to
+restore the state of your Python session and the contents of your
+working directory. (Alternatively, they will be automatically restored
+at the start of the new session if you turned on the “Persistence”
+features under “Notebook options” in the “Notebook” pane.)</p>
+<p><a id="commit"></a>Fortunately, there is a way to run your Notebook
+in the background for up to 12 hours. Click “Save Version” in the
+upper-right corner of the Notebook webpage. Make sure the version type
+is “Save and Run All (Commit)”. This will take a snapshot of the
+Notebook, start a new kernel, and run all of the Notebook’s Code cells
+from top to bottom.</p>
+<p>The resulting “committed” version of the Notebook will include the
+output, meaning the output of each cell and the contents of
+<code>/kaggle/working</code>. To go look at it while it is still
+running, use the “<a
+href="https://www.kaggle.com/discussions/product-feedback/193925">View
+Active Events</a>” button in the lower left corner of the Kaggle
+webpage. This gives a list of running kernels. Find the one you want,
+and select “Open in Viewer” or “Open Logs in Viewer” from its “…”
+menu.</p>
+<p>“Save Version” can also do a “Quick Save” that saves the current
+notebook without re-running anything. You can choose whether or not to
+save the output.</p>
+<p>To see all of your saved versions – both quick and committed – click
+on the version number next to the “Save Version” button.</p>
+<h3 id="download-your-output">Download your output</h3>
+<p>If your code creates <code>/kaggle/working/whatever.model</code>, how
+can you then download that file to your local machine so that you can
+submit it to Gradescope?</p>
+<p>Your <em>interactively running</em> Notebook has a “Notebook” pane at
+the right. (To see it, you might have to close another pane such as “Add
+Data”.) In the “Output” section of that pane, browse to your file and
+select “Download” from its “⋮” menu.</p>
+<p>Each <em>saved version</em> of your Notebook has an Output tab. You
+can click around there to download individual files from
+<code>/kaggle/working</code>. That tab also provides a command you can
+run on your local machine to download all the output, which will work if
+you set up a <code>kaggle.json</code> file with an API token <a
+href="#api">as described earlier</a>.</p>
+<p>Another option: If you cloned a git repo, the end of your Notebook
+could push the changes back up to github. For example:</p>
+<pre><code># give git enough info for its commit log (this modifies hw-lm-code/.git/config)
+!cd hw-lm-code; git config --global user.email &#39;&lt;username&gt;@jh.edu&#39;
+!cd hw-lm-code; git config --global user.name &#39;&lt;Your Name&gt; via Kaggle&#39;
+
+# copy your models into your local working tree
+!cp *.model hw-lm-code
+
+# add the model files to the repo, commit them, and push
+!cd hw-lm-code; git add *.model; git commit -a -m&#39;newly trained models&#39;; git push</code></pre>
+<p>You can now <code>git pull</code> the changes down to your local
+machine.</p>
+<h3 id="hardware-acceleration">Hardware Acceleration</h3>
+<p>Now, why again did we bother to get all of that working? Oh right!
+It’s time to get our speedup.</p>
+<p>Include the option <code>--device cuda</code> when running
+<code>train_lm.py</code> (and perhaps also when running
+<code>fileprob.py</code> or <code>textcat.py</code>). In our starter
+code, that flag tells PyTorch to create all tensors on the GPU by
+default. (Every tensor has an <a
+href="https://pytorch.org/docs/stable/tensor_attributes.html#torch.device"><code>torch.device</code></a>
+attribute that specifies the device where it will be computed.)</p>
+<p>However, creating a tensor will now throw a runtime exception if your
+kernel doesn’t have access to a GPU. To give it access, choose
+“Accelerator” from the “⋮” menu in the upper right of the Notebook, and
+change “None” to “GPU P100”.</p>
+<p>When you recompute your notebook in the background with “Save and Run
+All (commit)”, ordinarily it uses whatever GPU acceleration is turned on
+for the Notebook. However, you can change this under “Advanced options”
+when saving.</p>
+<h4 id="conserving-gpu-usage">Conserving GPU usage</h4>
+<p>Kaggle’s GPU usage is subject to limitations:</p>
+<ul>
+<li>one GPU at a time</li>
+<li>9 hours per session</li>
+<li>30 total hours per week</li>
+</ul>
+<p>The weekly 30 hours rolls over every Friday night at 8pm EDT / 7pm
+EST.</p>
+<p><strong>Important:</strong> Some tips about conserving GPU usage are
+<a href="https://www.kaggle.com/docs/efficient-gpu-usage">here</a>. You
+may want to turn on <a href="#persistence">persistence</a> so that you
+don’t have to rerun training every time you <em>reload</em> your
+Notebook, and do Quick Saves rather than <a href="#commit">commits</a>
+so that you don’t rerun training every time you <em>save</em> your
+Notebook.</p>
+<p>Be warned that when an interactive session with acceleration is
+active, it counts towards your 30 hours, even when no process is
+running. To conserve your hours when you’re not actually using the GPU,
+change the Accelerator back to None, or shut down the kernel altogether
+by clicking the power icon in the upper right or closing the
+webpage.</p>
+<hr />
+<h2 id="credits">CREDITS</h2>
+<p>A version of this Python port for an earlier version of this
+assignment was kindly provided by Eric Perlman, a previous student in
+the NLP class. Thanks to Prof. Jason Baldridge at U. of Texas for
+updating the code and these instructions when he borrowed that
+assignment. They were subsequently modified for later versions of the
+assignment by Xuchen Yao, Mozhi Zhang, Chu-Cheng Lin, Arya McCarthy,
+Brian Lu, and Jason Eisner.</p>
+<p>The Kaggle instructions were written by Camden Shultz and Jason
+Eisner. Thanks to David Chiang for suggesting the classroom use of
+Kaggle and the idea of uploading code files as a Dataset.</p>
+</body>
+</html>

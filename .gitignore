@@ -1,3 +1,4 @@
-wordsDict/*
-*.pdf
-words-*.txt
+data/*
+lexicons/*
+hw-lm.pdf
+graphing.html
