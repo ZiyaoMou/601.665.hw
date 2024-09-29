@@ -120,7 +120,7 @@ def main():
 
     tokens = sum(num_tokens(test_file) for test_file in args.test_files)
     print(f"Overall cross-entropy:\t{bits / tokens:.5f} bits per token")
-
+    print(f'Perplexity: {2**(bits / tokens):.2f}')
 
 if __name__ == "__main__":
     main()
