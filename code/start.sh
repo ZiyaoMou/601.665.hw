@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # 参数设置
-cs=(0 0.1 0.5)    # C 的值
-ds=(50 200)         # d 的值
+cs=(1)    # C 的值
+ds=(10 50 200)         # d 的值
 train_data_paths=("../data/gen_spam/train/gen" "../data/gen_spam/train/spam")  # 训练数据路径
 
 # 训练模型的循环

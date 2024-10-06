@@ -123,24 +123,28 @@ def main():
         
     log.info("Testing...")
     
-    lm1 = BackoffAddLambdaLanguageModel.load(args.model1, device=args.device)
-    lm2 = BackoffAddLambdaLanguageModel.load(args.model2, device=args.device)
+    lm1 = LanguageModel.load(args.model1, device=args.device)
+    lm2 = LanguageModel.load(args.model2, device=args.device)
     files = args.test_files
     model1_count = 0
     error_count = 0
+    total_log_prob_lm1 = 0.0
+    total_log_prob_lm2 = 0.0
     for file in files:
         model_type, log_prob = classify_file(file, lm1, lm2, args.prior1)
         if((model_type == "model1" and file.name.split(".")[0] != "gen") or (model_type == "model2" and file.name.split(".")[0] != "spam")):
             error_count += 1
         if(model_type == "model1"):
             model1_count += 1
+            total_log_prob_lm1 += log_prob
             print(f"{args.model1}\t{file}")
         else :
             # continue
+            total_log_prob_lm2 += log_prob
             print(f"{args.model2}\t{file}")
     print(f"{model1_count} files were more probably from {args.model1}({model1_count/len(files)*100:.2f}%)")
     print(f"{len(files) - model1_count} files were more probably from {args.model2}({(len(files) - model1_count)/len(files)*100:.2f}%)")
-    print(f"Error rate: {error_count/len(files)*100:.2f}%")
+    # print(f"Error rate: {error_count/len(files)*100:.2f}%")
     # We use natural log for our internal computations and that's
     # the kind of log-probability that file_log_prob returns.
     # We'll print that first.
@@ -151,19 +155,19 @@ def main():
     # # # time to print cross-entropy, we convert log base e to log base 2, 
     # # # by dividing by log(2).
 
-    # lm1_bits = -total_log_prob_lm1 / math.log(2)   # convert to bits of surprisal
-    # lm2_bits = -total_log_prob_lm2 / math.log(2)   # convert to bits of surprisal
+    lm1_bits = -total_log_prob_lm1 / math.log(2)   # convert to bits of surprisal
+    lm2_bits = -total_log_prob_lm2 / math.log(2)   # convert to bits of surprisal
 
     # # # We also divide by the # of tokens (including EOS tokens) to get
     # # # bits per token.  (The division happens within the print statement.)
-    # lm1_tokens = sum(test_file.name.split(".")[0] == "en" and num_tokens(test_file) for test_file in args.test_files)
-    # lm2_tokens = sum(test_file.name.split(".")[0] == "sp" and num_tokens(test_file) for test_file in args.test_files)
+    lm1_tokens = sum(test_file.name.split(".")[0] == "gen" and num_tokens(test_file) for test_file in args.test_files)
+    lm2_tokens = sum(test_file.name.split(".")[0] == "spam" and num_tokens(test_file) for test_file in args.test_files)
     # print(total_log_prob_lm1, total_log_prob_lm2)
     # print(f"Gen Overall cross-entropy:\t{lm1_bits / lm1_tokens:.2f} bits per token")
     # print(f'Perplexity: {2**(lm1_bits / lm1_tokens):.5f}')
     # print(f"Spam Overall cross-entropy:\t{lm2_bits / lm2_tokens:.2f} bits per token")
     # print(f'Perplexity: {2**(lm2_bits / lm2_tokens):.5f}')
-    # print(f"Overall cross-entropy:\t{(lm1_bits + lm2_bits) / (lm1_tokens + lm2_tokens):.2f} bits per token")
+    print(f"Overall cross-entropy:\t{(lm1_bits + lm2_bits) / (lm1_tokens + lm2_tokens):.2f} bits per token")
 
     # file_lengths = np.array(file_lengths)
     # print(file_lengths)

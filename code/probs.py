@@ -368,26 +368,12 @@ class BackoffAddLambdaLanguageModel(AddLambdaLanguageModel):
         self.lambda_ = lambda_
 
     def prob(self, x: Wordtype, y: Wordtype, z: Wordtype) -> float:
-        # Step 1: Try the trigram (x, y, z)
-        if (x, y, z) in self.event_count:
-            trigram_prob = ((self.event_count[(x, y, z)] + self.lambda_ * self.vocab_size * self.prob(None, y, z))
-                            / (self.context_count[(x, y)] + self.lambda_ * self.vocab_size))
-            return trigram_prob
-
-        # Step 2: If trigram not found, back off to bigram (y, z)
-        if (y, z) in self.event_count:
-            bigram_prob = ((self.event_count[(y, z)] + self.lambda_ * self.vocab_size * self.prob(None, None, z))
-                           / (self.context_count[(y,)] + self.lambda_ * self.vocab_size))
-            return bigram_prob
-
-        # Step 3: If bigram not found, back off to unigram (z)
-        if (z,) in self.event_count:
-            unigram_prob = ((self.event_count[(z,)] + self.lambda_)
-                            / (self.context_count[()] + self.lambda_ * self.vocab_size))
-            return unigram_prob
-
-        # Step 4: If no counts found, return uniform distribution probability
-        return 1 / self.vocab_size
+        # Don't forget the difference between the Wordtype z and the
+        # 1-element tuple (z,). If you're looking up counts,
+        # these will have very different counts!
+        p_z = (self.event_count[(z,)] + self.lambda_)/(self.context_count[()] + self.lambda_*self.vocab_size)
+        p_zy = (self.event_count[(y, z)] + self.lambda_*self.vocab_size*p_z)/(self.context_count[(y,)] + self.lambda_*self.vocab_size)
+        return (self.event_count[(x, y, z)] + self.lambda_*self.vocab_size*p_zy)/(self.context_count[(x, y)] + self.lambda_*self.vocab_size)
 
 
 class EmbeddingLogLinearLanguageModel(LanguageModel, nn.Module):
