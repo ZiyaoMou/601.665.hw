@@ -8,9 +8,9 @@ import logging
 import math
 from pathlib import Path
 import torch
-import matplotlib.pyplot as plt
-import numpy as np
-import statsmodels.api as sm
+# import matplotlib.pyplot as plt
+# import numpy as np
+# import statsmodels.api as sm
 
 from probs import Wordtype, LanguageModel, num_tokens, read_trigrams, BackoffAddLambdaLanguageModel
 
@@ -95,7 +95,6 @@ def classify_file(file: Path, lm1: LanguageModel, lm2: LanguageModel, prior1: fl
     # Compute log-probabilities for both classes
     log_prob1 = file_log_prob(file, lm1) + math.log(prior1)
     log_prob2 = file_log_prob(file, lm2) + math.log(prior2)
-    print(log_prob1, log_prob2)
     # Classify based on maximum posterior probability
     if log_prob1 > log_prob2:
         return "model1", log_prob1
@@ -144,7 +143,7 @@ def main():
             print(f"{args.model2}\t{file}")
     print(f"{model1_count} files were more probably from {args.model1}({model1_count/len(files)*100:.2f}%)")
     print(f"{len(files) - model1_count} files were more probably from {args.model2}({(len(files) - model1_count)/len(files)*100:.2f}%)")
-    # print(f"Error rate: {error_count/len(files)*100:.2f}%")
+    print(f"Error rate: {error_count/len(files)*100:.2f}%")
     # We use natural log for our internal computations and that's
     # the kind of log-probability that file_log_prob returns.
     # We'll print that first.
@@ -155,19 +154,20 @@ def main():
     # # # time to print cross-entropy, we convert log base e to log base 2, 
     # # # by dividing by log(2).
 
-    lm1_bits = -total_log_prob_lm1 / math.log(2)   # convert to bits of surprisal
-    lm2_bits = -total_log_prob_lm2 / math.log(2)   # convert to bits of surprisal
+    # lm1_bits = -total_log_prob_lm1 / math.log(2)   # convert to bits of surprisal
+    # lm2_bits = -total_log_prob_lm2 / math.log(2)   # convert to bits of surprisal
 
-    # # # We also divide by the # of tokens (including EOS tokens) to get
-    # # # bits per token.  (The division happens within the print statement.)
-    lm1_tokens = sum(test_file.name.split(".")[0] == "gen" and num_tokens(test_file) for test_file in args.test_files)
-    lm2_tokens = sum(test_file.name.split(".")[0] == "spam" and num_tokens(test_file) for test_file in args.test_files)
-    # print(total_log_prob_lm1, total_log_prob_lm2)
-    # print(f"Gen Overall cross-entropy:\t{lm1_bits / lm1_tokens:.2f} bits per token")
-    # print(f'Perplexity: {2**(lm1_bits / lm1_tokens):.5f}')
-    # print(f"Spam Overall cross-entropy:\t{lm2_bits / lm2_tokens:.2f} bits per token")
-    # print(f'Perplexity: {2**(lm2_bits / lm2_tokens):.5f}')
-    print(f"Overall cross-entropy:\t{(lm1_bits + lm2_bits) / (lm1_tokens + lm2_tokens):.2f} bits per token")
+    # # # # We also divide by the # of tokens (including EOS tokens) to get
+    # # # # bits per token.  (The division happens within the print statement.)
+    # lm1_tokens = sum(test_file.name.split(".")[0] == "gen" and num_tokens(test_file) for test_file in args.test_files)
+    # lm2_tokens = sum(test_file.name.split(".")[0] == "spam" and num_tokens(test_file) for test_file in args.test_files)
+    # print( lm1_tokens + lm2_tokens == (sum(num_tokens(test_file) for test_file in args.test_files)))
+    # # print(total_log_prob_lm1, total_log_prob_lm2)
+    # # print(f"Gen Overall cross-entropy:\t{lm1_bits / lm1_tokens:.2f} bits per token")
+    # # print(f'Perplexity: {2**(lm1_bits / lm1_tokens):.5f}')
+    # # print(f"Spam Overall cross-entropy:\t{lm2_bits / lm2_tokens:.2f} bits per token")
+    # # print(f'Perplexity: {2**(lm2_bits / lm2_tokens):.5f}')
+    # print(f"Overall cross-entropy:\t{(lm1_bits + lm2_bits) / (lm1_tokens + lm2_tokens):.2f} bits per token")
 
     # file_lengths = np.array(file_lengths)
     # print(file_lengths)

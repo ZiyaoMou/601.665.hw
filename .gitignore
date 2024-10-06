@@ -2,3 +2,9 @@ data/*
 lexicons/*
 hw-lm.pdf
 graphing.html
+code/*.model
+code/*.txt
+code/model/*.model
+.venv/
+.venv/*
+.venv

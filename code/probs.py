@@ -35,6 +35,7 @@ from typing import Counter, Dict
 from collections import Counter
 from tqdm import tqdm
 import numpy as np
+from collections import deque
 
 log = logging.getLogger(Path(__file__).stem)  # For usage, see findsim.py in earlier assignment.
 
@@ -393,6 +394,7 @@ class EmbeddingLogLinearLanguageModel(LanguageModel, nn.Module):
 
         # Precompute embeddings for all vocabulary words (including OOV)
         self.z_embeds = torch.stack([self.get_embedding(word) for word in vocab])
+        self.history = deque(maxlen=10)  # Keep the last 10 words by default
 
 
     def _load_embeddings(self, lexicon_file: Path) -> Tuple[torch.Tensor, Dict[str, int]]:
@@ -421,6 +423,9 @@ class EmbeddingLogLinearLanguageModel(LanguageModel, nn.Module):
     def prob(self, x: Wordtype, y: Wordtype, z: Wordtype) -> float:
         prob = torch.exp(self.log_prob_tensor(x, y, z)).item()
         return prob
+    
+    def log_prob(self, x: str, y: str, z: str) -> float:
+        return self.log_prob_tensor(x, y, z).item()
 
     def logits(self, x: Wordtype, y: Wordtype) -> Float[torch.Tensor, "vocab"]:
         x_embed = self.get_embedding(x)
@@ -432,7 +437,7 @@ class EmbeddingLogLinearLanguageModel(LanguageModel, nn.Module):
 
     def train(self, file: Path):
         # Initialize optimizer
-        gamma0 = 1e-2 
+        gamma0 = 1e-4 
         optimizer = optim.SGD(self.parameters(), lr=gamma0)
         nn.init.zeros_(self.X)
         nn.init.zeros_(self.Y)
@@ -492,16 +497,65 @@ class ImprovedLogLinearLanguageModel(EmbeddingLogLinearLanguageModel):
     # * You could use a different optimization algorithm instead of SGD, such
     #   as `torch.optim.Adam` (https://pytorch.org/docs/stable/optim.html).
     #
+    def __init__(self, vocab: Vocab, lexicon_file: Path, l2: float, epochs: int) -> None:
+        super().__init__(vocab, lexicon_file, l2, epochs)
+        
+        # Initialize OOV feature vectors and weights
+        self.oov_X = nn.Parameter(torch.zeros(self.dim), requires_grad=True)
+        self.oov_Y = nn.Parameter(torch.zeros(self.dim), requires_grad=True)
+        
+        # Unigram count for frequency-based features
+        self.unigram_counts = Counter()
+
+        # Spelling-based features
+        self.spelling_features = ["ing", "ed", "s"]
+        self.spelling_weights = nn.Parameter(torch.zeros(len(self.spelling_features)), requires_grad=True)
+        # A deque to store the recent history of words (with a fixed size)
+        self.history = deque(maxlen=10)  # Keep the last 10 words by default
+    
+    def extract_spelling_features(self, word: Wordtype) -> torch.Tensor:
+        features = torch.zeros(len(self.spelling_features))
+        for i, suffix in enumerate(self.spelling_features):
+            if word.endswith(suffix):
+                features[i] = 1.0
+        return features
+    
+    
+    def log_prob_tensor(self, x: Wordtype, y: Wordtype, z: Wordtype) -> TorchScalar:
+        logits = self.logits(x, y)
+        z_index = self.word_to_idx.get(z, self.word_to_idx.get("OOL"))
+        
+        if z == "OOV":
+            oov_feature = self.oov_X @ self.get_embedding(x) + self.oov_Y @ self.get_embedding(y)
+            logits[z_index] += oov_feature
+
+        if sum(self.unigram_counts.values()) > 0:
+            unigram_prob = math.log((self.unigram_counts[z] + 1) / sum(self.unigram_counts.values()))
+            logits[z_index] += unigram_prob
+        
+        spelling_feats = self.extract_spelling_features(z)
+        logits[z_index] += self.spelling_weights @ spelling_feats
+        
+        if z in self.history:
+            logits[z_index] += 1.0
+        
+        log_prob = logits[z_index] - torch.logsumexp(logits, dim=0)
+        return log_prob
+
+    def reset_history(self):
+        """Clear the history queue."""
+        self.history.clear()
+
     def train(self, file: Path, dev_file: Optional[Path] = None, patience: int = 5, batch_size: int = 32):
     # Initialize optimizer (use Adam for faster convergence)
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
+        optimizer = torch.optim.Adam(self.parameters(), lr=2 * 1e-4)
         nn.init.zeros_(self.X)
         nn.init.zeros_(self.Y)
 
         # Track the best loss for early stopping
         best_loss = float('inf')
         patience_counter = 0
-
+        self.reset_history()
         # Number of trigrams
         trigrams = list(read_trigrams(file, self.vocab))  # Load all trigrams
         N = len(trigrams)
@@ -523,6 +577,7 @@ class ImprovedLogLinearLanguageModel(EmbeddingLogLinearLanguageModel):
                 batch_loss = 0.0
                 for trigram in batch:
                     x, y, z = trigram
+                    self.history.append(z)
                     log_prob = self.log_prob_tensor(x, y, z)
 
                     # Compute L2 regularization term
