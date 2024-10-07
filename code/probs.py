@@ -394,7 +394,7 @@ class EmbeddingLogLinearLanguageModel(LanguageModel, nn.Module):
 
         # Precompute embeddings for all vocabulary words (including OOV)
         self.z_embeds = torch.stack([self.get_embedding(word) for word in vocab])
-        self.history = deque(maxlen=10)  # Keep the last 10 words by default
+        # self.history = deque(maxlen=10)  # Keep the last 10 words by default
 
 
     def _load_embeddings(self, lexicon_file: Path) -> Tuple[torch.Tensor, Dict[str, int]]:
@@ -511,7 +511,7 @@ class ImprovedLogLinearLanguageModel(EmbeddingLogLinearLanguageModel):
         self.spelling_features = ["ing", "ed", "s"]
         self.spelling_weights = nn.Parameter(torch.zeros(len(self.spelling_features)), requires_grad=True)
         # A deque to store the recent history of words (with a fixed size)
-        self.history = deque(maxlen=10)  # Keep the last 10 words by default
+        # self.history = deque(maxlen=10)  # Keep the last 10 words by default
     
     def extract_spelling_features(self, word: Wordtype) -> torch.Tensor:
         features = torch.zeros(len(self.spelling_features))
@@ -536,26 +536,18 @@ class ImprovedLogLinearLanguageModel(EmbeddingLogLinearLanguageModel):
         spelling_feats = self.extract_spelling_features(z)
         logits[z_index] += self.spelling_weights @ spelling_feats
         
-        if z in self.history:
-            logits[z_index] += 1.0
-        
         log_prob = logits[z_index] - torch.logsumexp(logits, dim=0)
         return log_prob
 
-    def reset_history(self):
-        """Clear the history queue."""
-        self.history.clear()
-
     def train(self, file: Path, dev_file: Optional[Path] = None, patience: int = 5, batch_size: int = 32):
     # Initialize optimizer (use Adam for faster convergence)
-        optimizer = torch.optim.Adam(self.parameters(), lr=2 * 1e-4)
+        optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
         nn.init.zeros_(self.X)
         nn.init.zeros_(self.Y)
 
         # Track the best loss for early stopping
         best_loss = float('inf')
         patience_counter = 0
-        self.reset_history()
         # Number of trigrams
         trigrams = list(read_trigrams(file, self.vocab))  # Load all trigrams
         N = len(trigrams)
@@ -577,7 +569,7 @@ class ImprovedLogLinearLanguageModel(EmbeddingLogLinearLanguageModel):
                 batch_loss = 0.0
                 for trigram in batch:
                     x, y, z = trigram
-                    self.history.append(z)
+                    # self.history.append(z)
                     log_prob = self.log_prob_tensor(x, y, z)
 
                     # Compute L2 regularization term

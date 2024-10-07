@@ -131,7 +131,7 @@ def main():
     total_log_prob_lm2 = 0.0
     for file in files:
         model_type, log_prob = classify_file(file, lm1, lm2, args.prior1)
-        if((model_type == "model1" and file.name.split(".")[0] != "gen") or (model_type == "model2" and file.name.split(".")[0] != "spam")):
+        if((model_type == "model1" and file.name.split(".")[0] != "en") or (model_type == "model2" and file.name.split(".")[0] != "sp")):
             error_count += 1
         if(model_type == "model1"):
             model1_count += 1
@@ -143,7 +143,7 @@ def main():
             print(f"{args.model2}\t{file}")
     print(f"{model1_count} files were more probably from {args.model1}({model1_count/len(files)*100:.2f}%)")
     print(f"{len(files) - model1_count} files were more probably from {args.model2}({(len(files) - model1_count)/len(files)*100:.2f}%)")
-    print(f"Error rate: {error_count/len(files)*100:.2f}%")
+    # log.error(f"Error rate: {error_count/len(files)*100:.2f}%")
     # We use natural log for our internal computations and that's
     # the kind of log-probability that file_log_prob returns.
     # We'll print that first.
