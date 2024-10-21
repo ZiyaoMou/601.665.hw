@@ -1,0 +1,12 @@
+(ROOT (S (NP (NPR (NNP John))) (VP (VBZ is) (ADJP-PRD (JJ happy))) (PUNC. .)))
+34.22401061796059
+(ROOT (S (NP (DT The) (ADJP (RB very) (JJS biggest)) (NNS companies)) (VP (VBP are) (RB not) (ADVP (RB likely)) (VP (TO to) (VP (VB go) (PP (IN under))))) (PUNC. .)))
+104.90922564708923
+(ROOT (S (NP (DT The) (NN market)) (VP (VBZ is) (VP (VBG wondering) (SBAR (WHNP (WP what)) (S (NP (NPRS (NNP General) (NNPS Motors))) (VP (VBZ has) (VP (VBN done))) (PUNC. .)))))))
+94.58118488252406
+(ROOT (S (PP (IN In) (NP (JJ recent) (NNS years))) , (NP (NN pay)) (VP (VBD surged) (SBAR (IN as) (S (NP (NN demand)) (VP (VBD rose) (SBAR (IN while) (S (NP (NNS workers)) (VP (VBN left) (PP (IN for) (NP (JJR easier) (NNS jobs)))))))))) (PUNC. .)))
+161.81896046511673
+(ROOT (S (S-ADV (VP (VBN caught) (PRT (RP off)) (NP (NN guard)))) , (NP (NPR (NNP Ford) (NNP Motor) (NNP Co.))) (VP (VBD had) (NP (DT no) (NN choice)) (PP (IN except) (S-NOM (VP (TO to) (VP (VB follow) (NP (NN suit)))))) (PP (IN with) (NP (NN financing) (NNS deals)))) (PUNC. .)))
+191.39053946140734
+(ROOT (S (NP (NNS data)) (VP (VBP show) (SBAR (WHNP (WDT that)) (S (VP (VB pay) (VP (VBD was) (ADJP-PRD (JJ flat) (PP (IN for) (NP (NP (DT the) (JJ third) (JJ consecutive) (NN quarter)) (PP (IN after) (NP (DT a) (NN rash)))))) (PP (IN of) (NP (QP (QP (CD 4)) (NN %) (PP (TO to) (NP (QP (CD 5)) (NN %)))) (JJ annualized) (NNS increases)))))))) (PUNC. .)))
+212.54526590959662

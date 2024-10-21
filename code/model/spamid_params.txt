@@ -1,1 +1,0 @@
-gen.model spam.model 0.2

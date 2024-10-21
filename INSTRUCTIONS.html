@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>INSTRUCTIONS</title>
+  <style>
+    html {
+      line-height: 1.5;
+      font-family: Georgia, serif;
+      font-size: 20px;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      word-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 1em;
+      }
+    }
+    @media print {
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
+      font-size: 85%;
+      margin: 0;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">INSTRUCTIONS</h1>
+</header>
+<h1 id="nlp-homework-4-parsing">NLP Homework 4: Parsing</h1>
+<p>We assume that you’ve made a local copy of <a href="http://www.cs.jhu.edu/~jason/465/hw-parse/" class="uri">http://www.cs.jhu.edu/~jason/465/hw-parse/</a> (for example, by downloading and unpacking the zipfile there) and that you are currently in that directory.</p>
+<h2 id="question-3.">QUESTION 3.</h2>
+<p>First try out the recognizer that we provided.</p>
+<pre><code>./recognize.py papa.gr papa.sen
+./recognize.py -v papa.gr papa.sen    # verbose output</code></pre>
+<p>Copy the program <code>recognize.py</code> to <code>parse.py</code>. Then edit <code>parse.py</code> to transform our unweighted recognizer into your probabilistic parser. You should be able to call it as</p>
+<pre><code>./parse.py papa.gr papa.sen | ./prettyprint</code></pre>
+<p>Notice that the docstring for the <code>Agenda</code> class includes some sample calls and their intended output. The bottom of the script uses <a href="https://pymotw.com/2/doctest/"><code>doctest</code></a> to check that those calls behave as intended. You may want to use <code>doctest</code> (or <a href="https://pymotw.com/2/unittest/"><code>unittest</code></a>) to document and test your own classes and methods, too.</p>
+<p>You are free to ignore part or all of <code>recognize.py</code> and just write your own solution from scratch, if you prefer. If your solution is not in Python, you should still submit a <code>parse.py</code>, which can just simply run your program, for example like this:</p>
+<pre><code>#!/usr/bin/env python3
+import sys
+import subprocess
+subprocess.run([&quot;java&quot;,&quot;-jar&quot;,&quot;myparser.jar&quot;]  # invoke my parser
+                + sys.argv[1:])                # on the same args</code></pre>
+<hr />
+<h2 id="question-4.">QUESTION 4.</h2>
+<p>Notice that even <code>recognize</code> is very slow on a large grammar, and of course <code>parse</code> will be at least as slow:</p>
+<pre><code>./recognize.py --progress wallstreet.gr wallstreet.sen
+./parse.py --progress wallstreet.gr wallstreet.sen</code></pre>
+<p>So copy <code>parse.py</code> to <code>parse2.py</code> and make that version faster.</p>
+<p>(The <code>--progress</code> option displays the fraction of columns that have been processed so far. In addition, the <code>-v</code> option reports the number of PREDICT, SCAN, and ATTACH actions for each sentence. You could enhance it to report more detailed statistics if you like.)</p>
+</body>
+</html>
