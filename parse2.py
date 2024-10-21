@@ -167,20 +167,16 @@ class EarleyChart:
                 self.profile["ATTACH"] += 1
 
     def print_item(self, item):
-        if isinstance(item, Item):
-            if not item.next_symbol():
-                # Append the current item's left-hand side (LHS) and recursively print its constituents
-                self.result += f' ({item.rule.lhs}'
-                self.print_item(item.parent_state)
-                self.print_item(item.new_state)
-                self.result += ')'
-            else:
-                # Recursively print the parent and new state
-                self.print_item(item.parent_state)
-                self.print_item(item.new_state)
-        else:
-            # If it's not an Item, add it directly to the result
+        if type(item) is not Item:
             self.result += f' {item}'
+        elif not item.next_symbol():
+            self.result += f' ({item.rule.lhs}'
+            self.print_item(item.parent_state)
+            self.print_item(item.new_state)
+            self.result += f')'
+        elif item.parent_state:
+            self.print_item(item.parent_state)
+            self.print_item(item.new_state)
 
 class Agenda:
     """An agenda of items that need to be processed.  Newly built items 

@@ -161,13 +161,11 @@ class EarleyChart:
 
     def print_item(self, item):
         if type(item) is not Item:
-            # sys.stdout.write(item)
             self.result += f' {item}'
         elif not item.next_symbol():
             self.result += f' ({item.rule.lhs}'
             self.print_item(item.parent_state)
             self.print_item(item.new_state)
-            # sys.stdout.write(')')
             self.result += f')'
         elif item.parent_state:
             self.print_item(item.parent_state)
