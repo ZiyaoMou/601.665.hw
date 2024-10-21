@@ -96,11 +96,11 @@ class EarleyChart:
         else:
             print('NONE')
 
-    def _merge_completed_items(self, nonterminal: str, position: int) -> None:
-        """Merges all completed items for the nonterminal starting at the given position."""
-        for item in self.cols[position].all():
-            if item.rule.lhs == nonterminal and item.next_symbol() is None:
-                self._attach(item, position)
+    # def _merge_completed_items(self, nonterminal: str, position: int) -> None:
+    #     """Merges all completed items for the nonterminal starting at the given position."""
+    #     for item in self.cols[position].all():
+    #         if item.rule.lhs == nonterminal and item.next_symbol() is None:
+    #             self._attach(item, position)
 
     def _run_earley(self) -> None:
         """Fill in the Earley chart."""
@@ -169,7 +169,7 @@ class EarleyChart:
             if customer.next_symbol() == item.rule.lhs:
                 new_item = customer.with_dot_advanced(customer, item, item.rule.weight)
                 self.cols[position].push(new_item)
-                self._merge_completed_items(new_item)  # Merge all completed items for the nonterminal
+                # self._merge_completed_items(new_item)  # Merge all completed items for the nonterminal
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
 
