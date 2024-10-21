@@ -165,15 +165,21 @@ class EarleyChart:
                 self.profile["ATTACH"] += 1
 
     def print_parse_tree(self, item):
-        if type(item) is not Item:
+        """Recursively build the parse tree for the given item."""
+        if not isinstance(item, Item):
             self.result += f' {item}'
         elif not item.next_symbol():
             self.result += f' ({item.rule.lhs}'
+            self._print_subtrees(item)
+            self.result += ')'
+        else:
+            self._print_subtrees(item)
+
+    def _print_subtrees(self, item):
+        """Helper function to recursively print parent_state and new_state."""
+        if item.parent_state:
             self.print_parse_tree(item.parent_state)
-            self.print_parse_tree(item.new_state)
-            self.result += f')'
-        elif item.parent_state:
-            self.print_parse_tree(item.parent_state)
+        if item.new_state:
             self.print_parse_tree(item.new_state)
 
 class Agenda:
