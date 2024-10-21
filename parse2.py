@@ -79,21 +79,26 @@ class EarleyChart:
 
 
     def display_optimal_parse(self):
-        """Determine if the sentence was accepted and print the optimal parse with the lowest weight."""
-        lowest_weight = 0
+        """Display the highest-probability parse of the sentence."""
         best_parse = None
-        for item in self.cols[-1].all(): 
+        min_weight = float('inf')  # Start with a very high weight to find the lowest
+
+        # Iterate over all items in the final column to find the optimal parse
+        for item in self.cols[-1].all():
             if (item.rule.lhs == self.grammar.start_symbol 
                     and item.next_symbol() is None 
                     and item.start_position == 0):
-                if not best_parse or item.rule.weight < lowest_weight:
+                # Update if a parse with a lower weight is found
+                if item.rule.weight < min_weight:
                     best_parse = item
-                    lowest_weight = item.rule.weight
-        if best_parse is not None:
+                    min_weight = item.rule.weight
+
+        # If an optimal parse was found, print it
+        if best_parse:
             self.result = ''
-            self.print_item(best_parse)
-            print(self.result.strip())
-            print(str(lowest_weight))
+            self.print_parse_tree(best_parse)
+            print(self.result.strip())  # Print the resulting parse tree
+            print(f"{min_weight}")  # Print the parse weight
         else:
             print('NONE')
 
@@ -137,10 +142,12 @@ class EarleyChart:
         if self.cols[position].is_predicted(nonterminal):
             log.debug(f"\tskip predicting: {nonterminal} rule in column {position}")
             return
-        self.cols[position].add_predicted(nonterminal)
+
+        self.cols[position].mark_predicted(nonterminal)
+
         for rule in self.grammar.expansions(nonterminal):
             new_item = Item(rule, dot_position=0, start_position=position)
-            self.cols[position].push_batch(new_item)
+            self.cols[position].add_batch_to_column(new_item)
             log.debug(f"\tPredicted: {new_item} in column {position}")
             self.profile["PREDICT"] += 1
 
@@ -166,17 +173,17 @@ class EarleyChart:
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
 
-    def print_item(self, item):
+    def print_parse_tree(self, item):
         if type(item) is not Item:
             self.result += f' {item}'
         elif not item.next_symbol():
             self.result += f' ({item.rule.lhs}'
-            self.print_item(item.parent_state)
-            self.print_item(item.new_state)
+            self.print_parse_tree(item.parent_state)
+            self.print_parse_tree(item.new_state)
             self.result += f')'
         elif item.parent_state:
-            self.print_item(item.parent_state)
-            self.print_item(item.new_state)
+            self.print_parse_tree(item.parent_state)
+            self.print_parse_tree(item.new_state)
 
 class Agenda:
     """An agenda of items that need to be processed.  Newly built items 
@@ -247,22 +254,11 @@ class Agenda:
             self._items.append(item)
             self._index[item] = len(self._items) - 1
         else:
-            old_index = self._index[item]
-            if item.rule.weight < self._items[old_index].rule.weight:
-                self._items[old_index] = item
-                if old_index not in self._reprocess:
-                    self._reprocess.append(old_index)
-
-    def push_batch(self, item: Item) -> None:
-        """Add (enqueue) the item knowing the category is already in the agenda"""
-        self._items.append(item)
-        self._index[item] = len(self._items) - 1
-
-    def add_predicted(self, nonterminal: str) -> None:
-        self._predicted.add(nonterminal)
-
-    def is_predicted(self, nonterminal: str) -> bool:
-        return nonterminal in self._predicted
+            existing_position = self._index[item]
+            if item.rule.weight < self._items[existing_position].rule.weight:
+                self._items[existing_position] = item
+                if existing_position not in self._reprocess:
+                    self._reprocess.append(existing_position)
 
     def pop(self) -> Item:
         """Returns one of the items that was waiting to be popped (dequeued).
@@ -270,8 +266,8 @@ class Agenda:
         if len(self) == 0:
             raise IndexError
         if self._reprocess:
-            index = self._reprocess.pop()
-            item = self._items[index]
+            reprocess_index = self._reprocess.pop()
+            item = self._items[reprocess_index]
             return item
         item = self._items[self._next]
         self._next += 1
@@ -287,6 +283,17 @@ class Agenda:
         next = self._next
         return f"{self.__class__.__name__}({self._items[:next]}; {self._items[next:]})"
 
+    def add_batch_to_column(self, item: Item) -> None:
+        """Add a batch of predicted items to the column, avoiding duplicates."""
+        self._items.append(item)
+        self._index[item] = len(self._items) - 1
+
+    def mark_predicted(self, nonterminal: str) -> None:
+        """Mark that a batch of rules for this nonterminal has been predicted."""
+        self._predicted.add(nonterminal)
+
+    def is_predicted(self, nonterminal: str) -> bool:
+        return nonterminal in self._predicted
 
 class Grammar:
     """Represents a weighted context-free grammar."""
@@ -403,16 +410,20 @@ class Item:
         else:
             return self.rule.rhs[self.dot_position]
 
-    def with_dot_advanced(self, parent_state, new_state, weight=None) -> Item:
+    def with_dot_advanced(self, parent_state: Item, new_state: Item, extra_weight=None) -> Item:
+        """Return a new item with the dot advanced by one position."""
         if self.next_symbol() is None:
-            raise IndexError("Can't advance the dot past the end of the rule")
-        if weight:
-            new_rule = self.rule.add_weight(weight)
-            return Item(rule=new_rule, dot_position=self.dot_position + 1, start_position=self.start_position,
-                        parent_state=parent_state, new_state=new_state)
-        else:
-            return Item(rule=self.rule, dot_position=self.dot_position + 1, start_position=self.start_position,
-                        parent_state=parent_state, new_state=new_state)
+            raise IndexError("Cannot advance dot beyond the end of the rule")
+
+        # Add weight to the rule if provided
+        new_rule = self.rule.add_weight(extra_weight) if extra_weight else self.rule
+
+        # Return a new Item with updated dot position and states
+        return Item(rule=new_rule,
+                    dot_position=self.dot_position + 1,
+                    start_position=self.start_position,
+                    parent_state=parent_state,
+                    new_state=new_state)
 
     def __repr__(self) -> str:
         """Human-readable representation string used when printing this item."""
@@ -449,7 +460,6 @@ def main():
                 # analyze the sentence
                 log.debug("=" * 70)
                 log.debug(f"Parsing sentence: {sentence}")
-                # NOTE: need deepcopy because we modify the grammar
                 chart = EarleyChart(sentence.split(), copy.deepcopy(grammar), progress=args.progress)
 
                 chart.display_optimal_parse()
