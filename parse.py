@@ -164,10 +164,7 @@ class EarleyChart:
             # sys.stdout.write(item)
             self.result += f' {item}'
         elif not item.next_symbol():
-            # sys.stdout.write('(')
             self.result += f' ({item.rule.lhs}'
-            # sys.stdout.write(item.rule.lhs)
-            # sys.stdout.write(' ')
             self.print_item(item.parent_state)
             self.print_item(item.new_state)
             # sys.stdout.write(')')
