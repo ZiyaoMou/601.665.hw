@@ -10,3 +10,9 @@
 191.39053946140734
 (ROOT (S (NP (NNS data)) (VP (VBP show) (SBAR (WHNP (WDT that)) (S (VP (VB pay) (VP (VBD was) (ADJP-PRD (JJ flat) (PP (IN for) (NP (NP (DT the) (JJ third) (JJ consecutive) (NN quarter)) (PP (IN after) (NP (DT a) (NN rash)))))) (PP (IN of) (NP (QP (QP (CD 4)) (NN %) (PP (TO to) (NP (QP (CD 5)) (NN %)))) (JJ annualized) (NNS increases)))))))) (PUNC. .)))
 212.54526590959662
+(ROOT (S (VP (VBG running) (S (NP (DT the) (JJ combined) (NNS companies)) , (S-ADV (VP (VBD projected) (VP (TO to) (VP (VBP have) (RB nearly) (NP-PRD (NP (QP (CD 22) (CD million)) (NNS subscribers)) (PP (IN by) (NP (DT the) (NN time))) (SBAR (S (NP (DT the) (NN deal)) (VP (VBZ is) (VP (VBN slated) (VP (TO to) (VP (VB close) (PP (IN in) (NP (DT a) (NN year)))))))))))))) , (VP (VBZ is) (RB likely) (VP (TO to) (VP (VB pose) (NP (JJ extraordinary) (NN management) (NNS questions)) , (S-ADV (VP (VBG according) (PP (TO to) (NP (NPR (NNP Wall) (NNP Street)) (NP (NNS analysts))))))))) (PUNC. .)))))
+349.1325358405936
+(ROOT (S (NP (DT a) (JJ senior) (NN intelligence) (NN official)) (VP (VBD said) (SBAR (S (NP (DT the) (NN administration)) (VP (VBN considered) (S (SBAR-TMP (WHADVP (WRB how) (RB strongly)) (S (NP (PRP it)) (VP (VBD was) (VP (VBN criticized) (PP (IN for) (S-NOM (VP (VBG issuing) (NP (DT a) (JJ similar) (ADJP (ADVP (RBR less) (IN than)) (JJ specific)) (NN warning)) (PP (IN on) (NP (NPR (NNP Oct.)) (QP (CD 11))))))))))) , (NP (ADJP (RB then) (VBN decided)) (DT the) (NN information)) (VP (VBD was) (RB too) (ADJP-PRD (JJ serious) (S (VP (TO to) (VP (VB keep) (PP (IN under) (S-NOM (VP (VB cover))))))))) (PUNC. .))))))))
+385.74392102995995
+(ROOT (S (PUNC`` ``) (S-TPC (NP (PRP It)) (VP (VP (VBZ 's) (ADJP-PRD (RB very) (JJ real))) , (ADVP (RB otherwise) (NP (PRP we))) (VP (MD would) (RB n't) (VP (VB be) (VP (VBG doing) (NP (PRP it))))))) , (PUNC'' '') (NP (DT this) (NN official)) (VP (VBD said)) (PUNC. .)))
+144.11275128802328

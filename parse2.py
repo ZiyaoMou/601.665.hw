@@ -78,29 +78,26 @@ class EarleyChart:
         self.result = ''
 
 
-    def display_optimal_parse(self):
-        """Determine if the sentence was accepted and print the optimal parse with the lowest weight."""
-        optimal_parse = min(
-            (state for state in self.cols[-1].all()
-            if state.rule.lhs == self.grammar.start_symbol 
-            and state.next_symbol() is None 
-            and state.start_position == 0),
-            key=lambda state: state.rule.weight, default=None
-        )
-
-        if optimal_parse:
+    def print_best_parse(self):
+        """Was the sentence accepted?
+        That is, does the finished chart contain an item corresponding to a parse of the sentence?
+        This method answers the recognition question, but not the parsing question."""
+        lowest_weight = 0
+        best_parse = None
+        for item in self.cols[-1].all():  # the last column
+            if (item.rule.lhs == self.grammar.start_symbol  # a ROOT item in this column
+                    and item.next_symbol() is None  # that is complete
+                    and item.start_position == 0):  # and started back at position 0
+                if not best_parse or item.rule.weight < lowest_weight:
+                    best_parse = item
+                    lowest_weight = item.rule.weight
+        if best_parse is not None:
             self.result = ''
-            self.print_item(optimal_parse)  # Corrected to use print_item
+            self.print_item(best_parse)
             print(self.result.strip())
-            print(str(optimal_parse.rule.weight))
+            print(str(lowest_weight))
         else:
             print('NONE')
-
-    # def _merge_completed_items(self, nonterminal: str, position: int) -> None:
-    #     """Merges all completed items for the nonterminal starting at the given position."""
-    #     for item in self.cols[position].all():
-    #         if item.rule.lhs == nonterminal and item.next_symbol() is None:
-    #             self._attach(item, position)
 
     def _run_earley(self) -> None:
         """Fill in the Earley chart."""
@@ -140,13 +137,12 @@ class EarleyChart:
     def _predict(self, nonterminal: str, position: int) -> None:
         """Start looking for this nonterminal at the given position."""
         if self.cols[position].is_predicted(nonterminal):
+            log.debug(f"\tskip predicting: {nonterminal} rule in column {position}")
             return
-        
-        self.cols[position].mark_predicted(nonterminal)
-
+        self.cols[position].add_predicted(nonterminal)
         for rule in self.grammar.expansions(nonterminal):
             new_item = Item(rule, dot_position=0, start_position=position)
-            self.cols[position].add_to_batch(new_item)
+            self.cols[position].push_batch(new_item)
             log.debug(f"\tPredicted: {new_item} in column {position}")
             self.profile["PREDICT"] += 1
 
@@ -169,25 +165,25 @@ class EarleyChart:
             if customer.next_symbol() == item.rule.lhs:
                 new_item = customer.with_dot_advanced(customer, item, item.rule.weight)
                 self.cols[position].push(new_item)
-                # self._merge_completed_items(new_item)  # Merge all completed items for the nonterminal
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
 
     def print_item(self, item):
-        if isinstance(item, Item):
-            if not item.next_symbol():
-                # Append the current item's left-hand side (LHS) and recursively print its constituents
-                self.result += f' ({item.rule.lhs}'
-                self.print_item(item.parent_state)
-                self.print_item(item.new_state)
-                self.result += ')'
-            else:
-                # Recursively print the parent and new state
-                self.print_item(item.parent_state)
-                self.print_item(item.new_state)
-        else:
-            # If it's not an Item, add it directly to the result
+        if type(item) is not Item:
+            # sys.stdout.write(item)
             self.result += f' {item}'
+        elif not item.next_symbol():
+            # sys.stdout.write('(')
+            self.result += f' ({item.rule.lhs}'
+            # sys.stdout.write(item.rule.lhs)
+            # sys.stdout.write(' ')
+            self.print_item(item.previous_state)
+            self.print_item(item.new_constituent)
+            # sys.stdout.write(')')
+            self.result += f')'
+        elif item.previous_state:
+            self.print_item(item.previous_state)
+            self.print_item(item.new_constituent)
 
 
 class Agenda:
@@ -252,11 +248,6 @@ class Agenda:
         """Returns number of items that are still waiting to be popped.
         Enables `len(my_agenda)`."""
         return len(self._items) + len (self._reprocess) - self._next
-    
-    def add_to_batch(self, item: Item) -> None:
-        """Add (enqueue) the item knowing the category is already in the agenda"""
-        self._items.append(item)
-        self._index[item] = len(self._items) - 1
 
     def push(self, item: Item) -> None:
         """Add (enqueue) the item, unless it was previously added."""
@@ -270,7 +261,12 @@ class Agenda:
                 if old_index not in self._reprocess:
                     self._reprocess.append(old_index)
 
-    def mark_predicted(self, nonterminal: str) -> None:
+    def push_batch(self, item: Item) -> None:
+        """Add (enqueue) the item knowing the category is already in the agenda"""
+        self._items.append(item)
+        self._index[item] = len(self._items) - 1
+
+    def add_predicted(self, nonterminal: str) -> None:
         self._predicted.add(nonterminal)
 
     def is_predicted(self, nonterminal: str) -> bool:
@@ -352,14 +348,10 @@ class Grammar:
 
     def vocab_specialize(self, tokens: List[str]) -> None:
         """Specialize the vocabulary of the grammar to the given tokens."""
-        specialized = {
-            key: [rule for rule in rules if self.is_relevant(rule, tokens)]
-            for key, rules in self._expansions.items()
-        }
-        if not specialized:  # Add fallback if no specialized rules match
-            print("Warning: No specialized rules found. Using full grammar.")
-        else:
-            self._expansions = specialized
+        for key in self._expansions:
+            self._expansions[key] = [rule for rule in self._expansions[key] if self.is_relevant(rule, tokens)]
+
+
 
 
 # A dataclass is a class that provides some useful defaults for you. If you define
@@ -404,8 +396,8 @@ class Item:
     rule: Rule
     dot_position: int
     start_position: int
-    parent_state: Item = None
-    new_state: Item = None
+    previous_state: Item = None
+    new_constituent: Item = None
 
     # We don't store the end_position, which corresponds to the column
     # that the item is in, although you could store it redundantly for 
@@ -419,16 +411,16 @@ class Item:
         else:
             return self.rule.rhs[self.dot_position]
 
-    def with_dot_advanced(self, parent_state, new_state, weight=None) -> Item:
+    def with_dot_advanced(self, previous_state, new_constituent, weight=None) -> Item:
         if self.next_symbol() is None:
             raise IndexError("Can't advance the dot past the end of the rule")
         if weight:
             new_rule = self.rule.add_weight(weight)
             return Item(rule=new_rule, dot_position=self.dot_position + 1, start_position=self.start_position,
-                        parent_state=parent_state, new_state=new_state)
+                        previous_state=previous_state, new_constituent=new_constituent)
         else:
             return Item(rule=self.rule, dot_position=self.dot_position + 1, start_position=self.start_position,
-                        parent_state=parent_state, new_state=new_state)
+                        previous_state=previous_state, new_constituent=new_constituent)
 
     def __repr__(self) -> str:
         """Human-readable representation string used when printing this item."""
@@ -465,8 +457,10 @@ def main():
                 # analyze the sentence
                 log.debug("=" * 70)
                 log.debug(f"Parsing sentence: {sentence}")
+                # NOTE: need deepcopy because we modify the grammar
                 chart = EarleyChart(sentence.split(), copy.deepcopy(grammar), progress=args.progress)
-                chart.display_optimal_parse()
+
+                chart.print_best_parse()
                 log.debug(f"Profile of work done: {chart.profile}")
 
 
