@@ -175,13 +175,13 @@ class EarleyChart:
             self.result += f' ({item.rule.lhs}'
             # sys.stdout.write(item.rule.lhs)
             # sys.stdout.write(' ')
-            self.print_item(item.previous_state)
-            self.print_item(item.new_constituent)
+            self.print_item(item.parent_state)
+            self.print_item(item.new_state)
             # sys.stdout.write(')')
             self.result += f')'
-        elif item.previous_state:
-            self.print_item(item.previous_state)
-            self.print_item(item.new_constituent)
+        elif item.parent_state:
+            self.print_item(item.parent_state)
+            self.print_item(item.new_state)
 
 
 class Agenda:
@@ -394,8 +394,8 @@ class Item:
     rule: Rule
     dot_position: int
     start_position: int
-    previous_state: Item = None
-    new_constituent: Item = None
+    parent_state: Item = None
+    new_state: Item = None
 
     # We don't store the end_position, which corresponds to the column
     # that the item is in, although you could store it redundantly for 
@@ -409,16 +409,16 @@ class Item:
         else:
             return self.rule.rhs[self.dot_position]
 
-    def with_dot_advanced(self, previous_state, new_constituent, weight=None) -> Item:
+    def with_dot_advanced(self, parent_state, new_state, weight=None) -> Item:
         if self.next_symbol() is None:
             raise IndexError("Can't advance the dot past the end of the rule")
         if weight:
             new_rule = self.rule.add_weight(weight)
             return Item(rule=new_rule, dot_position=self.dot_position + 1, start_position=self.start_position,
-                        previous_state=previous_state, new_constituent=new_constituent)
+                        parent_state=parent_state, new_state=new_state)
         else:
             return Item(rule=self.rule, dot_position=self.dot_position + 1, start_position=self.start_position,
-                        previous_state=previous_state, new_constituent=new_constituent)
+                        parent_state=parent_state, new_state=new_state)
 
     def __repr__(self) -> str:
         """Human-readable representation string used when printing this item."""
