@@ -77,19 +77,20 @@ class EarleyChart:
 
     def display_optimal_parse(self):
         """Determine if the sentence was accepted and print the optimal parse with the lowest weight."""
-        optimal_parse = min(
-            (state for state in self.cols[-1].all()
-            if state.rule.lhs == self.grammar.start_symbol 
-            and state.next_symbol() is None 
-            and state.start_position == 0),
-            key=lambda state: state.rule.weight, default=None
-        )
-
-        if optimal_parse:
+        lowest_weight = 0
+        best_parse = None
+        for item in self.cols[-1].all(): 
+            if (item.rule.lhs == self.grammar.start_symbol 
+                    and item.next_symbol() is None 
+                    and item.start_position == 0):
+                if not best_parse or item.rule.weight < lowest_weight:
+                    best_parse = item
+                    lowest_weight = item.rule.weight
+        if best_parse is not None:
             self.result = ''
-            self.print_item(optimal_parse)  # Corrected to use print_item
+            self.print_item(best_parse)
             print(self.result.strip())
-            print(str(optimal_parse.rule.weight))
+            print(str(lowest_weight))
         else:
             print('NONE')
 

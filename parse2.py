@@ -80,19 +80,20 @@ class EarleyChart:
 
     def display_optimal_parse(self):
         """Determine if the sentence was accepted and print the optimal parse with the lowest weight."""
-        optimal_parse = min(
-            (state for state in self.cols[-1].all()
-            if state.rule.lhs == self.grammar.start_symbol 
-            and state.next_symbol() is None 
-            and state.start_position == 0),
-            key=lambda state: state.rule.weight, default=None
-        )
-
-        if optimal_parse:
+        lowest_weight = 0
+        best_parse = None
+        for item in self.cols[-1].all(): 
+            if (item.rule.lhs == self.grammar.start_symbol 
+                    and item.next_symbol() is None 
+                    and item.start_position == 0):
+                if not best_parse or item.rule.weight < lowest_weight:
+                    best_parse = item
+                    lowest_weight = item.rule.weight
+        if best_parse is not None:
             self.result = ''
-            self.print_item(optimal_parse)  # Corrected to use print_item
+            self.print_item(best_parse)
             print(self.result.strip())
-            print(str(optimal_parse.rule.weight))
+            print(str(lowest_weight))
         else:
             print('NONE')
 
@@ -174,13 +175,13 @@ class EarleyChart:
             self.result += f' ({item.rule.lhs}'
             # sys.stdout.write(item.rule.lhs)
             # sys.stdout.write(' ')
-            self.print_item(item.old_state)
-            self.print_item(item.new_state)
+            self.print_item(item.previous_state)
+            self.print_item(item.new_constituent)
             # sys.stdout.write(')')
             self.result += f')'
-        elif item.old_state:
-            self.print_item(item.old_state)
-            self.print_item(item.new_state)
+        elif item.previous_state:
+            self.print_item(item.previous_state)
+            self.print_item(item.new_constituent)
 
 
 class Agenda:
@@ -393,8 +394,8 @@ class Item:
     rule: Rule
     dot_position: int
     start_position: int
-    old_state: Item = None
-    new_state: Item = None
+    previous_state: Item = None
+    new_constituent: Item = None
 
     # We don't store the end_position, which corresponds to the column
     # that the item is in, although you could store it redundantly for 
@@ -408,16 +409,16 @@ class Item:
         else:
             return self.rule.rhs[self.dot_position]
 
-    def with_dot_advanced(self, old_state, new_state, weight=None) -> Item:
+    def with_dot_advanced(self, previous_state, new_constituent, weight=None) -> Item:
         if self.next_symbol() is None:
             raise IndexError("Can't advance the dot past the end of the rule")
         if weight:
             new_rule = self.rule.add_weight(weight)
             return Item(rule=new_rule, dot_position=self.dot_position + 1, start_position=self.start_position,
-                        old_state=old_state, new_state=new_state)
+                        previous_state=previous_state, new_constituent=new_constituent)
         else:
             return Item(rule=self.rule, dot_position=self.dot_position + 1, start_position=self.start_position,
-                        old_state=old_state, new_state=new_state)
+                        previous_state=previous_state, new_constituent=new_constituent)
 
     def __repr__(self) -> str:
         """Human-readable representation string used when printing this item."""
